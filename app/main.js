@@ -7,7 +7,8 @@ console.log('Logs from your program will appear here!');
 const server = net.createServer((socket) => {
   socket.on('data', (data) => {
     const dataArray = data.toString().split(`\r\n`);
-    const url = dataArray[0].split(' ')[1];
+    const firstLine = dataArray[0].split(' ');
+    const url = firstLine[1];
 
     const answer = 'HTTP/1.1 200 OK\r\n\r\n';
     const error = `HTTP/1.1 404 Not Found\r\n\r\n`;
