@@ -13,19 +13,28 @@ const server = net.createServer((socket) => {
 
     const conditionFor4thStage = `/echo/`;
     if (url.startsWith(conditionFor4thStage)) {
-      let randomString = url.substring(6);
+      const status = `HTTP/1.1 200 OK`;
+      const headerContentType = `Content-Type: text/plain`;
+      const headerContentLength = `Content-Length:${randomString.length}`;
+      const body = url.substring(6);
       // const header = {
       //   'Content-Type': text / plain,
       //   'Content-Length': `${randomString.length}`,
       // };
-      const headerString = `Content-Type: text/plain\r\nContent-Length:${randomString.length}\r\n`;
 
-      const answer4thStage = `HTTP/1.1 200 OK\r\n${headerString}\r\n${randomString}`;
-      socket.write(answer4thStage);
+      const response = [
+        status,
+        headerContentType,
+        headerContentLength,
+        '',
+        body,
+      ].join('\r\n');
+      // const answer4thStage = `HTTP/1.1 200 OK\r\n${header}\r\n${randomString}`;
+      socket.write(response);
     } else {
       if (url === '/') {
-        const answerWithJustSlash = `HTTP/1.1 200 OK\r\n\r\n`;
-        socket.write(answerWithJustSlash);
+        const response = `HTTP/1.1 200 OK\r\n\r\n`;
+        socket.write(response);
       } else {
         const error = `HTTP/1.1 404 Not Found\r\n\r\n`;
         socket.write(error);
