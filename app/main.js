@@ -9,15 +9,17 @@ const server = net.createServer((socket) => {
     const dataArray = data.toString().split(`\r\n`);
     const firstLine = dataArray[0].split(' ');
     const url = firstLine[1];
-
-    const answer = 'HTTP/1.1 200 OK\r\n\r\n';
+    const randomString = firstLine[1].split('/')[1];
+    const answer = `HTTP/1.1 200 OK\r\n${randomString}\r\n`;
     const error = `HTTP/1.1 404 Not Found\r\n\r\n`;
 
-    if (url === '/') {
-      socket.write(answer);
-    } else {
-      socket.write(error);
-    }
+    socket.write(answer);
+
+    // if (url === '/') {
+    //   socket.write(answer);
+    // } else {
+    //   socket.write(error);
+    // }
   });
 
   socket.on('close', () => {
