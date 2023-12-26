@@ -9,17 +9,33 @@ const server = net.createServer((socket) => {
     const dataArray = data.toString().split(`\r\n`);
     const firstLine = dataArray[0].split(' ');
     const url = firstLine[1];
-    const randomString = firstLine[1].split('/')[1];
-    const answer = `HTTP/1.1 200 OK\r\n${randomString}\r\n`;
-    const error = `HTTP/1.1 404 Not Found\r\n\r\n`;
+    const path = url.split('/');
 
-    socket.write(answer);
+    const conditionFor4thStage = `/echo/`;
+    if (url.startsWith(conditionFor4thStage)) {
+      let randomString;
+      for (let index = 0; index < path.length; index++) {
+        if (index < 2) continue;
+        randomString += path[index];
+      }
+      const answer4thStage = `HTTP/1.1 200 OK\r\n\r\n${randomString}`;
 
-    // if (url === '/') {
-    //   socket.write(answer);
-    // } else {
-    //   socket.write(error);
-    // }
+      socket.write(answer4thStage);
+    } else {
+      const answer3rdStage = `HTTP/1.1 200 OK\r\n\r\n`;
+      const error = `HTTP/1.1 404 Not Found\r\n\r\n`;
+
+      socket.write(answer3rdStage);
+
+      if (url === '/') {
+        socket.write(answerWithJustSlash);
+      } else {
+        socket.write(error);
+      }
+    }
+
+    l;
+    // console.log(randomString);
   });
 
   socket.on('close', () => {
