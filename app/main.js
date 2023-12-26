@@ -15,8 +15,8 @@ const server = net.createServer((socket) => {
     if (url.startsWith(conditionFor4thStage)) {
       const status = `HTTP/1.1 200 OK`;
       const headerContentType = `Content-Type: text/plain`;
-      const headerContentLength = `Content-Length:${randomString.length}`;
       const body = url.substring(6);
+      const headerContentLength = `Content-Length:${body.length}`;
       // const header = {
       //   'Content-Type': text / plain,
       //   'Content-Length': `${randomString.length}`,
