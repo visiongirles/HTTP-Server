@@ -13,23 +13,17 @@ const server = net.createServer((socket) => {
 
     const conditionFor4thStage = `/echo/`;
     if (url.startsWith(conditionFor4thStage)) {
-      let randomString;
-      for (let index = 0; index < path.length; index++) {
-        if (index < 2) continue;
-        randomString += path[index];
-      }
+      let randomString = url.substring(6);
       const answer4thStage = `HTTP/1.1 200 OK\r\n\r\n${randomString}`;
-
       socket.write(answer4thStage);
     } else {
-      const answer3rdStage = `HTTP/1.1 200 OK\r\n\r\n`;
-      const error = `HTTP/1.1 404 Not Found\r\n\r\n`;
-
       socket.write(answer3rdStage);
 
       if (url === '/') {
+        const answer3rdStage = `HTTP/1.1 200 OK\r\n\r\n`;
         socket.write(answerWithJustSlash);
       } else {
+        const error = `HTTP/1.1 404 Not Found\r\n\r\n`;
         socket.write(error);
       }
     }
