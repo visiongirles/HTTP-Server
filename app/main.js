@@ -30,7 +30,7 @@ const server = net.createServer((socket) => {
     } else if (path.startsWith(condition4thStage)) {
       const status = `HTTP/1.1 200 OK`;
       const headerContentType = `Content-Type: text/plain`;
-      const body = url.substring(6);
+      const body = path.substring(6);
       const headerContentLength = `Content-Length:${body.length}`;
       const response = [
         status,
