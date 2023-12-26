@@ -7,21 +7,31 @@ console.log('Logs from your program will appear here!');
 const server = net.createServer((socket) => {
   socket.on('data', (data) => {
     const dataArray = data.toString().split(`\r\n`);
-    const firstLine = dataArray[0].split(' ');
-    const url = firstLine[1];
-    const path = url.split('/');
+    const [method, path, protocol] = dataArray[0].split(' ');
+    const [_, userAgentInfo] = dataArray[2].split(' ');
 
-    const conditionFor4thStage = `/echo/`;
-    if (url.startsWith(conditionFor4thStage)) {
+    const condition4thStage = `/echo/`;
+
+    const condition5thStage = '/user-agent';
+
+    if (path.startsWith(condition5thStage)) {
+      const status = `HTTP/1.1 200 OK`;
+      const headerContentType = `Content-Type: text/plain`;
+      const body = userAgentInfo;
+      const headerContentLength = `Content-Length:${body.length}`;
+      const response = [
+        status,
+        headerContentType,
+        headerContentLength,
+        '',
+        body,
+      ].join('\r\n');
+      socket.write(response);
+    } else if (path.startsWith(condition4thStage)) {
       const status = `HTTP/1.1 200 OK`;
       const headerContentType = `Content-Type: text/plain`;
       const body = url.substring(6);
       const headerContentLength = `Content-Length:${body.length}`;
-      // const header = {
-      //   'Content-Type': text / plain,
-      //   'Content-Length': `${randomString.length}`,
-      // };
-
       const response = [
         status,
         headerContentType,
@@ -32,7 +42,7 @@ const server = net.createServer((socket) => {
       // const answer4thStage = `HTTP/1.1 200 OK\r\n${header}\r\n${randomString}`;
       socket.write(response);
     } else {
-      if (url === '/') {
+      if (path === '/') {
         const response = `HTTP/1.1 200 OK\r\n\r\n`;
         socket.write(response);
       } else {
@@ -40,9 +50,6 @@ const server = net.createServer((socket) => {
         socket.write(error);
       }
     }
-
-    l;
-    // console.log(randomString);
   });
 
   socket.on('close', () => {
