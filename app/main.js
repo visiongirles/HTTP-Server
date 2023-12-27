@@ -7,7 +7,7 @@ console.log('Logs from your program will appear here!');
 
 // Uncomment this to pass the first stage
 const server = net.createServer((socket) => {
-  socket.on('data', (data) => {
+  socket.on('data', async (data) => {
     const dataArray = data.toString().split(`\r\n`);
     // console.log(dataArray);
 
@@ -26,44 +26,68 @@ const server = net.createServer((socket) => {
       // argv: /usr/local/bin/node,/app/app/main.js,--directory,/tmp/data/codecrafters.io/http-server-tester/
       const filename = path.substring(7);
       const filePath = `${directory}${filename}`;
+      // try {const stats = await fs.stat(filePath);
+      //   socket.write(response)}
+      //   catch(e){}
 
-      fs.stat(filePath, (error, stats) => {
-        if (!error) {
-          const status = `HTTP/1.1 200 OK`;
-          const headerContentType = `Content-Type: application/octet-stream`;
-          // const context = fs.readFile(filePath, { encoding: 'utf8' });
+      try {
+        const stats = await fs.stat(filePath);
+        const status = `HTTP/1.1 200 OK`;
+        const headerContentType = `Content-Type: application/octet-stream`;
+        const headerContentLength = `Content-Length:${stats.size}`;
+        const response = [
+          status,
+          headerContentType,
+          headerContentLength,
+          '',
+          '',
+        ].join('\r\n');
+        socket.write(response);
+      } catch (error) {
+        const errorResponse = `HTTP/1.1 404 Not Found\r\n\r\n`;
+        socket.write(errorResponse);
+        console.log(error);
+      }
 
-          const headerContentLength = `Content-Length:${stats.size}`;
+      // fs.stat(filePath, (error, stats) => {
+      //   if (!error) {
+      //     const status = `HTTP/1.1 200 OK`;
+      //     const headerContentType = `Content-Type: application/octet-stream`;
+      //     // const context = fs.readFile(filePath, { encoding: 'utf8' });
 
-          function read(filePath) {
-            const readableStream = fs.createReadStream(filePath);
+      //     const headerContentLength = `Content-Length:${stats.size}`;
 
-            readableStream.on('error', function (error) {
-              console.log(`error: ${error.message}`);
-            });
+      //     const body = fs.readFileSync();
 
-            readableStream.on('data', (chunk) => {
-              socket.write(chunk);
-            });
-          }
+      //     // function read(filePath) {
+      //     //   const readableStream = fs.createReadStream(filePath);
 
-          const response = [
-            status,
-            headerContentType,
-            headerContentLength,
-            '',
-            '',
-          ].join('\r\n');
-          // socket.pipe();
-          socket.write(response);
-          read();
-          // console.log(`Файл ${filePath} существует.`);
-        } else {
-          const errorResponse = `HTTP/1.1 404 Not Found\r\n\r\n`;
-          socket.write(errorResponse);
-          // console.error(`Файл ${filePath} не существует.`);
-        }
-      });
+      //     //   readableStream.on('error', function (error) {
+      //     //     console.log(`error: ${error.message}`);
+      //     //   });
+
+      //     //   readableStream.on('data', (chunk) => {
+      //     //     socket.write(chunk);
+      //     //   });
+      //     // }
+
+      //     const response = [
+      //       status,
+      //       headerContentType,
+      //       headerContentLength,
+      //       '',
+      //       '',
+      //     ].join('\r\n');
+      //     // socket.pipe();
+      //     socket.write(response);
+      //     // read();
+      //     // console.log(`Файл ${filePath} существует.`);
+      //   } else {
+      //     const errorResponse = `HTTP/1.1 404 Not Found\r\n\r\n`;
+      //     socket.write(errorResponse);
+      //     // console.error(`Файл ${filePath} не существует.`);
+      //   }
+      // });
     } else if (path.startsWith(condition5thStage)) {
       const status = `HTTP/1.1 200 OK`;
       const headerContentType = `Content-Type: text/plain`;
@@ -103,7 +127,6 @@ const server = net.createServer((socket) => {
   });
 
   socket.on('close', () => {
-    console.log('ALLO&@');
     socket.end();
     server.close();
   });
