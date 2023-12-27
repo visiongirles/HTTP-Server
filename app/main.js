@@ -34,24 +34,25 @@ const server = net.createServer((socket) => {
         const stats = await fs.stat(filePath);
         const status = `HTTP/1.1 200 OK`;
         const headerContentType = `Content-Type: application/octet-stream`;
-        function read(filePath) {
-          const readableStream = fs.createReadStream(filePath);
+        const body = fs.readFileSync(filePath);
+        // function read(filePath) {
+        //   const readableStream = fs.createReadStream(filePath);
 
-          readableStream.on('error', function (error) {
-            console.log(`error: ${error.message}`);
-          });
+        //   readableStream.on('error', function (error) {
+        //     console.log(`error: ${error.message}`);
+        //   });
 
-          readableStream.on('data', (chunk) => {
-            socket.write(chunk);
-          });
-        }
+        //   readableStream.on('data', (chunk) => {
+        //     socket.write(chunk);
+        //   });
+        // }
         const headerContentLength = `Content-Length:${stats.size}`;
         const response = [
           status,
           headerContentType,
           headerContentLength,
           '',
-          '',
+          body,
         ].join('\r\n');
         socket.write(response);
         read();
