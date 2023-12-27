@@ -21,7 +21,8 @@ const server = net.createServer((socket) => {
     const condition7thStage = '/files/';
 
     if (path.startsWith(condition7thStage)) {
-      const directory = argv[3];
+      const [execfile, flag, directory] = argv;
+      console.log(`directory: ${directory}`);
       //O_RDWR
 
       const filename = path.split('/')[1];
