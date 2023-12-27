@@ -53,7 +53,7 @@ const server = net.createServer((socket) => {
           headerContentType,
           headerContentLength,
           '',
-          body,
+          '',
         ].join('\r\n');
         socket.write(response);
         read();
