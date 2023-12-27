@@ -43,7 +43,7 @@ const server = net.createServer((socket) => {
             });
 
             readableStream.on('data', (chunk) => {
-              socket.pipe(chunk);
+              socket.write(chunk);
             });
           }
 
