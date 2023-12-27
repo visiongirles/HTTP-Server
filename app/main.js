@@ -23,30 +23,31 @@ const server = net.createServer((socket) => {
     if (path.startsWith(condition7thStage)) {
       const [execPath, execFile, flag, directory] = argv;
 
-      //  typeof argv[index + 1] !== 'undefined'
-
-      // let directory;
-      // for (let index = 0; index < argv.length; index++) {
-      //   if (
-      //     argv[index] === '--directory' &&
-
-      //   ) {
-      //     directory = argv[index + 1];
-      //   }
-      // }
-      // console.log(`argv: ${argv}`);
-      // //O_RDWR
       // argv: /usr/local/bin/node,/app/app/main.js,--directory,/tmp/data/codecrafters.io/http-server-tester/
       const filename = path.substring(7);
-
       const filePath = `${directory}${filename}`;
-      console.log(filePath);
-      fs.access(filePath, fs.constants.F_OK, (err) => {
-        if (!err) {
+
+      fs.stat(filePath, (error, stats) => {
+        if (!error) {
           const status = `HTTP/1.1 200 OK`;
           const headerContentType = `Content-Type: application/octet-stream`;
-          const body = '';
-          const headerContentLength = `Content-Length:${body.length}`;
+          // const context = fs.readFile(filePath, { encoding: 'utf8' });
+
+          let body = '';
+          const headerContentLength = `Content-Length:${stats.size}`;
+
+          function read(filePath) {
+            const readableStream = fs.createReadStream(filePath);
+
+            readableStream.on('error', function (error) {
+              console.log(`error: ${error.message}`);
+            });
+
+            readableStream.on('data', (chunk) => {
+              body += chunk;
+            });
+          }
+          read();
           const response = [
             status,
             headerContentType,
@@ -54,12 +55,13 @@ const server = net.createServer((socket) => {
             '',
             body,
           ].join('\r\n');
+          // socket.pipe();
           socket.write(response);
-          console.log(`Файл ${filePath} существует.`);
+          // console.log(`Файл ${filePath} существует.`);
         } else {
-          const error = `HTTP/1.1 404 Not Found\r\n\r\n`;
-          socket.write(error);
-          console.error(`Файл ${filePath} не существует.`);
+          const errorResponse = `HTTP/1.1 404 Not Found\r\n\r\n`;
+          socket.write(errorResponse);
+          // console.error(`Файл ${filePath} не существует.`);
         }
       });
     } else if (path.startsWith(condition5thStage)) {
