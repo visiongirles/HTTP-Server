@@ -7,10 +7,6 @@ console.log('Logs from your program will appear here!');
 
 // Uncomment this to pass the first stage
 const server = net.createServer((socket) => {
-  if (argv.length > 2) {
-    const directory = argv[2];
-    //O_RDWR
-  }
   socket.on('data', (data) => {
     const dataArray = data.toString().split(`\r\n`);
     // console.log(dataArray);
@@ -25,6 +21,9 @@ const server = net.createServer((socket) => {
     const condition7thStage = '/files/';
 
     if (path.startsWith(condition7thStage)) {
+      const directory = argv[2];
+      //O_RDWR
+
       const filename = path.split('/')[1];
 
       const filePath = `${directory}/${filename}`;
