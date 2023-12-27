@@ -33,7 +33,6 @@ const server = net.createServer((socket) => {
           const headerContentType = `Content-Type: application/octet-stream`;
           // const context = fs.readFile(filePath, { encoding: 'utf8' });
 
-          let body = '';
           const headerContentLength = `Content-Length:${stats.size}`;
 
           function read(filePath) {
@@ -44,19 +43,20 @@ const server = net.createServer((socket) => {
             });
 
             readableStream.on('data', (chunk) => {
-              body += chunk;
+              socket.pipe(chunk);
             });
           }
-          read();
+
           const response = [
             status,
             headerContentType,
             headerContentLength,
             '',
-            body,
+            '',
           ].join('\r\n');
           // socket.pipe();
           socket.write(response);
+          read();
           // console.log(`Файл ${filePath} существует.`);
         } else {
           const errorResponse = `HTTP/1.1 404 Not Found\r\n\r\n`;
