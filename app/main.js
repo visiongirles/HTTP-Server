@@ -42,8 +42,22 @@ const server = net.createServer((socket) => {
       const filePath = `${directory}${filename}`;
       fs.access(filePath, fs.constants.F_OK, (err) => {
         if (!err) {
+          const status = `HTTP/1.1 200 OK`;
+          const headerContentType = `Content-Type: application/octet-stream`;
+          const body = '';
+          const headerContentLength = `Content-Length:${body.length}`;
+          const response = [
+            status,
+            headerContentType,
+            headerContentLength,
+            '',
+            body,
+          ].join('\r\n');
+          socket.write(response);
           console.log(`Файл ${filePath} существует.`);
         } else {
+          const error = `HTTP/1.1 404 Not Found\r\n\r\n`;
+          socket.write(error);
           console.error(`Файл ${filePath} не существует.`);
         }
       });
