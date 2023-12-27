@@ -1,6 +1,7 @@
 const net = require('net');
 const { argv } = require('node:process');
-const fs = require('node:fs/promises');
+const fsPromises = require('node:fs/promises');
+const fs = require('node:fs');
 
 // You can use print statements as follows for debugging, they'll be visible when running tests.
 console.log('Logs from your program will appear here!');
@@ -31,21 +32,21 @@ const server = net.createServer((socket) => {
       //   catch(e){}
 
       try {
-        const stats = await fs.stat(filePath);
+        const stats = await fsPromises.stat(filePath);
         const status = `HTTP/1.1 200 OK`;
         const headerContentType = `Content-Type: application/octet-stream`;
-        const body = fs.readFileSync(filePath);
-        // function read(filePath) {
-        //   const readableStream = fs.createReadStream(filePath);
+        // const body = fs.readFileSync(filePath);
+        function read(filePath) {
+          const readableStream = fs.createReadStream(filePath);
 
-        //   readableStream.on('error', function (error) {
-        //     console.log(`error: ${error.message}`);
-        //   });
+          readableStream.on('error', function (error) {
+            console.log(`error: ${error.message}`);
+          });
 
-        //   readableStream.on('data', (chunk) => {
-        //     socket.write(chunk);
-        //   });
-        // }
+          readableStream.on('data', (chunk) => {
+            socket.write(chunk);
+          });
+        }
         const headerContentLength = `Content-Length:${stats.size}`;
         const response = [
           status,
