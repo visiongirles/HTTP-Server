@@ -22,10 +22,22 @@ const server = net.createServer((socket) => {
 
     if (path.startsWith(condition7thStage)) {
       const [execPath, execFile, flag, directory] = argv;
-      console.log(`argv: ${argv}`);
-      //O_RDWR
+
+      //  typeof argv[index + 1] !== 'undefined'
+
+      // let directory;
+      // for (let index = 0; index < argv.length; index++) {
+      //   if (
+      //     argv[index] === '--directory' &&
+
+      //   ) {
+      //     directory = argv[index + 1];
+      //   }
+      // }
+      // console.log(`argv: ${argv}`);
+      // //O_RDWR
       // argv: /usr/local/bin/node,/app/app/main.js,--directory,/tmp/data/codecrafters.io/http-server-tester/
-      const filename = path.split('/')[1];
+      const filename = path.substring(7);
 
       const filePath = `${directory}${filename}`;
       fs.access(filePath, fs.constants.F_OK, (err) => {
