@@ -40,6 +40,7 @@ const server = net.createServer((socket) => {
       const filename = path.substring(7);
 
       const filePath = `${directory}${filename}`;
+      console.log(filePath);
       fs.access(filePath, fs.constants.F_OK, (err) => {
         if (!err) {
           const status = `HTTP/1.1 200 OK`;
