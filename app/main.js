@@ -21,20 +21,20 @@ const server = net.createServer((socket) => {
     const condition7thStage = '/files/';
 
     if (path.startsWith(condition7thStage)) {
-      const [execfile, flag, directory] = argv;
+      const [execPath, execFile, flag, directory] = argv;
       console.log(`argv: ${argv}`);
       //O_RDWR
+      // argv: /usr/local/bin/node,/app/app/main.js,--directory,/tmp/data/codecrafters.io/http-server-tester/
+      const filename = path.split('/')[1];
 
-      // const filename = path.split('/')[1];
-
-      // const filePath = `${directory}/${filename}`;
-      // fs.access(filePath, fs.constants.F_OK, (err) => {
-      //   if (!err) {
-      //     console.log(`Файл ${filePath} существует.`);
-      //   } else {
-      //     console.error(`Файл ${filePath} не существует.`);
-      //   }
-      // });
+      const filePath = `${directory}${filename}`;
+      fs.access(filePath, fs.constants.F_OK, (err) => {
+        if (!err) {
+          console.log(`Файл ${filePath} существует.`);
+        } else {
+          console.error(`Файл ${filePath} не существует.`);
+        }
+      });
     } else if (path.startsWith(condition5thStage)) {
       const status = `HTTP/1.1 200 OK`;
       const headerContentType = `Content-Type: text/plain`;
