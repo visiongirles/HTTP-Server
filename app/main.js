@@ -33,39 +33,42 @@ const server = net.createServer((socket) => {
 
       try {
         const stats = await fsPromises.stat(filePath);
+        console.log(`Stats: ${stats}`);
         const status = `HTTP/1.1 200 OK`;
         const headerContentType = `Content-Type: application/octet-stream`;
         const headerContentLength = `Content-Length:${stats.size}`;
+        const response = [
+          status,
+          headerContentType,
+          headerContentLength,
+          '',
+          '',
+        ].join('\r\n');
+        socket.write(response);
 
         const readableStream = fs.createReadStream(filePath);
+        // readableStream.on('error', (error) => {
+        //   return;
+        //   // socket.write(error);
+        // });
+
         readableStream.on('data', (chunk) => {
-          const response = [
-            status,
-            headerContentType,
-            headerContentLength,
-            '',
-            chunk,
-          ].join('\r\n');
-          console.log('Test in data event');
-          socket.write(response);
-          socket.end();
+          console.log('In data event');
+          socket.write(chunk);
         });
       } catch (error) {
         const errorResponse = `HTTP/1.1 404 Not Found\r\n\r\n`;
         socket.write(errorResponse);
-        console.log(error);
+        console.log(`Error from catch: ${error}`);
       }
 
       // fs.stat(filePath, (error, stats) => {
       //   if (!error) {
       //     const status = `HTTP/1.1 200 OK`;
       //     const headerContentType = `Content-Type: application/octet-stream`;
-      //     // const context = fs.readFile(filePath, { encoding: 'utf8' });
-
+      //     const context = fs.readFile(filePath, { encoding: 'utf8' });
       //     const headerContentLength = `Content-Length:${stats.size}`;
-
       //     const body = fs.readFileSync();
-
       //     const response = [
       //       status,
       //       headerContentType,
@@ -73,10 +76,10 @@ const server = net.createServer((socket) => {
       //       '',
       //       '',
       //     ].join('\r\n');
-      //     // socket.pipe();
+      // socket.pipe();
       //     socket.write(response);
-      //     // read();
-      //     // console.log(`Файл ${filePath} существует.`);
+      // read();
+      // console.log(`Файл ${filePath} существует.`);
       //   } else {
       //     const errorResponse = `HTTP/1.1 404 Not Found\r\n\r\n`;
       //     socket.write(errorResponse);
