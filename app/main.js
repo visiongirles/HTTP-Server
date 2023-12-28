@@ -57,7 +57,7 @@ const server = net.createServer((socket) => {
           socket.write(chunk);
         });
       } catch (error) {
-        const errorResponse = `HTTP/1.1 404 Not Found\r\n\r\n`;
+        const errorResponse = `HTTP/1.1 404 Not Found\r\nContent-Length: 0\r\n\r\n`;
         socket.write(errorResponse);
         console.log(`Error from catch: ${error}`);
       }
