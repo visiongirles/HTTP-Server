@@ -35,25 +35,19 @@ const server = net.createServer((socket) => {
         const stats = await fsPromises.stat(filePath);
         const status = `HTTP/1.1 200 OK`;
         const headerContentType = `Content-Type: application/octet-stream`;
-        const readableStream = fs.createReadStream(filePath);
-
-        // readableStream.on('error', function (error) {
-        //   console.log(`error: ${error.message}`);
-        // });
-
         const headerContentLength = `Content-Length:${stats.size}`;
-        const response = [
-          status,
-          headerContentType,
-          headerContentLength,
-          '',
-          '',
-        ].join('\r\n');
-        socket.write(response);
 
+        const readableStream = fs.createReadStream(filePath);
         readableStream.on('data', (chunk) => {
+          const response = [
+            status,
+            headerContentType,
+            headerContentLength,
+            '',
+            chunk,
+          ].join('\r\n');
           console.log('Test in data event');
-          socket.write(chunk);
+          socket.write(response);
           socket.end();
         });
       } catch (error) {
