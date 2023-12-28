@@ -35,18 +35,18 @@ const server = net.createServer((socket) => {
         const stats = await fsPromises.stat(filePath);
         const status = `HTTP/1.1 200 OK`;
         const headerContentType = `Content-Type: application/octet-stream`;
-        // const body = fs.readFileSync(filePath);
-        function read(filePath) {
-          const readableStream = fs.createReadStream(filePath);
+        const readableStream = fs.createReadStream(filePath);
 
-          readableStream.on('error', function (error) {
-            console.log(`error: ${error.message}`);
-          });
+        // readableStream.on('error', function (error) {
+        //   console.log(`error: ${error.message}`);
+        // });
 
-          readableStream.on('data', (chunk) => {
-            socket.write(chunk);
-          });
-        }
+        readableStream.on('data', (chunk) => {
+          console.log('Test in data event');
+          socket.write(chunk);
+          socket.end();
+        });
+
         const headerContentLength = `Content-Length:${stats.size}`;
         const response = [
           status,
@@ -56,7 +56,6 @@ const server = net.createServer((socket) => {
           '',
         ].join('\r\n');
         socket.write(response);
-        read();
       } catch (error) {
         const errorResponse = `HTTP/1.1 404 Not Found\r\n\r\n`;
         socket.write(errorResponse);
