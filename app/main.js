@@ -41,12 +41,6 @@ const server = net.createServer((socket) => {
         //   console.log(`error: ${error.message}`);
         // });
 
-        readableStream.on('data', (chunk) => {
-          console.log('Test in data event');
-          socket.write(chunk);
-          socket.end();
-        });
-
         const headerContentLength = `Content-Length:${stats.size}`;
         const response = [
           status,
@@ -56,6 +50,12 @@ const server = net.createServer((socket) => {
           '',
         ].join('\r\n');
         socket.write(response);
+
+        readableStream.on('data', (chunk) => {
+          console.log('Test in data event');
+          socket.write(chunk);
+          socket.end();
+        });
       } catch (error) {
         const errorResponse = `HTTP/1.1 404 Not Found\r\n\r\n`;
         socket.write(errorResponse);
