@@ -67,7 +67,7 @@ const server = net.createServer((socket) => {
           break;
         }
         case 'POST': {
-          const [bodyStage] = requestArray[6];
+          const bodyStage = requestArray[6];
           console.log(data.toString());
           console.log(bodyStage);
           break;
