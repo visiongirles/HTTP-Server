@@ -8,7 +8,7 @@ console.log('Logs from your program will appear here!');
 
 function createResponse(status, headerContentType, body, bodySize) {
   const responseStatus = `HTTP/1.1 ${status}`;
-  const responseHeaderContentType = headerContentType`Content-Type: ${headerContentType}`;
+  const responseHeaderContentType = `Content-Type: ${headerContentType}`;
   const responseHeaderContentLength = `Content-Length: ${bodySize}`;
   const responseHeaders =
     headerContentType === ''
