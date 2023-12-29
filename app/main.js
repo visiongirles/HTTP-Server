@@ -23,13 +23,16 @@ function createResponse(status, headerContentType, body, bodySize) {
   return response;
 }
 
+function create404Response() {
+  const response = createResponse('404 Not Found', '', '', 0);
+  return response;
+}
+
 const server = net.createServer((socket) => {
   socket.on('data', async (data) => {
     const requestArray = data.toString().split(`\r\n`);
     const [method, path, protocol] = requestArray[0].split(' ');
     const [_, userAgentInfo] = requestArray[2].split(' ');
-    // const indexOfHeadersEnd = requestArray.indexOf('');
-    // const [bodyStage] = requestArray[indexOfHeadersEnd + 1];
 
     const condition4thStage = `/echo/`;
     const condition5thStage = '/user-agent';
@@ -43,7 +46,6 @@ const server = net.createServer((socket) => {
       switch (method) {
         case 'GET': {
           // argv: /usr/local/bin/node,/app/app/main.js,--directory,/tmp/data/codecrafters.io/http-server-tester/
-
           try {
             const stats = await fsPromises.stat(filePath);
             const response = createResponse(
@@ -61,26 +63,28 @@ const server = net.createServer((socket) => {
             });
           } catch (error) {
             console.log(`Error from catch: ${error}`);
-            const errorResponse = createResponse('404 Not Found', '', '', 0);
+            const errorResponse = create404Response();
             socket.write(errorResponse);
           }
           break;
         }
         case 'POST': {
-          const requestBody = requestArray[6];
-          // console.log(data.toString());
-          // console.log(bodyStage);
-
+          const indexOfHeadersEnd = requestArray.indexOf('');
+          const requestBody = requestArray[indexOfHeadersEnd + 1];
+          // const requestBody = requestArray[6];
           try {
             await fsPromises.writeFile(filePath, requestBody);
             const response = createResponse('201 Created', '', '', 0);
             socket.write(response);
-          } catch (error) {}
-          // fs.writeFile(filePath, requestBody, function (err) {
-          //   if (err) throw err;
-          //   const response = createResponse('201 Created', '', '', 0);
-          //   socket.write(response);
-          // });
+          } catch (error) {
+            const responseError = createResponse(
+              '500 Internal Server Error',
+              '',
+              '',
+              0
+            );
+            socket.write(responseError);
+          }
           break;
         }
         default:
@@ -109,7 +113,7 @@ const server = net.createServer((socket) => {
         const response = createResponse('200 OK', '', '', 0);
         socket.write(response);
       } else {
-        const error = createResponse('404 Not Found', '', '', 0);
+        const error = create404Response();
         socket.write(error);
       }
     }
