@@ -28,10 +28,9 @@ const server = net.createServer((socket) => {
     const requestArray = data.toString().split(`\r\n`);
     const [method, path, protocol] = requestArray[0].split(' ');
     const [_, userAgentInfo] = requestArray[2].split(' ');
+
     const condition4thStage = `/echo/`;
-
     const condition5thStage = '/user-agent';
-
     const condition7thStage = '/files/';
 
     if (path.startsWith(condition7thStage)) {
@@ -45,23 +44,12 @@ const server = net.createServer((socket) => {
 
           try {
             const stats = await fsPromises.stat(filePath);
-            // console.log(`Stats: ${stats}`);
             const response = createResponse(
               '200 OK',
               'application/octet-stream',
               '',
               stats.size
             );
-            // const status = `HTTP/1.1 200 OK`;
-            // const headerContentType = `Content-Type: `;
-            // const headerContentLength = `Content-Length:${stats.size}`;
-            // const response = [
-            //   status,
-            //   headerContentType,
-            //   headerContentLength,
-            //   '',
-            //   '',
-            // ].join('\r\n');
             socket.write(response);
 
             const readableStream = fs.createReadStream(filePath);
@@ -77,6 +65,7 @@ const server = net.createServer((socket) => {
           break;
         }
         case 'POST': {
+          console.log(data.toString());
           break;
         }
         default:
@@ -89,17 +78,6 @@ const server = net.createServer((socket) => {
         userAgentInfo,
         userAgentInfo.length
       );
-      // const status = `HTTP/1.1 200 OK`;
-      // const headerContentType = `Content-Type: `;
-      // const body = userAgentInfo;
-      // const headerContentLength = `Content-Length:${body.length}`;
-      // const response = [
-      //   status,
-      //   headerContentType,
-      //   headerContentLength,
-      //   '',
-      //   body,
-      // ].join('\r\n');
       socket.write(response);
     } else if (path.startsWith(condition4thStage)) {
       const body = path.substring(6);
@@ -114,12 +92,8 @@ const server = net.createServer((socket) => {
     } else {
       if (path === '/') {
         const response = createResponse('200 OK', '', '', 0);
-        // const status = `HTTP/1.1 200 OK\r\n`;
-        // const header = `Content-Length: 0\r\n\r\n`;
-        // socket.write(status + header);
         socket.write(response);
       } else {
-        // const error = `HTTP/1.1 404 Not Found\r\n\r\n`;
         const error = createResponse('404 Not Found', '', '', 0);
         socket.write(error);
       }
