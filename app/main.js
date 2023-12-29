@@ -73,12 +73,14 @@ const server = net.createServer((socket) => {
 
           try {
             await fsPromises.writeFile(filePath, requestBody);
-          } catch (error) {}
-          fs.writeFile(filePath, 'Hello content!', function (err) {
-            if (err) throw err;
             const response = createResponse('201 Created', '', '', 0);
             socket.write(response);
-          });
+          } catch (error) {}
+          // fs.writeFile(filePath, requestBody, function (err) {
+          //   if (err) throw err;
+          //   const response = createResponse('201 Created', '', '', 0);
+          //   socket.write(response);
+          // });
           break;
         }
         default:
