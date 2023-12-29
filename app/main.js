@@ -71,7 +71,6 @@ const server = net.createServer((socket) => {
         case 'POST': {
           const indexOfHeadersEnd = requestArray.indexOf('');
           const requestBody = requestArray[indexOfHeadersEnd + 1];
-          // const requestBody = requestArray[6];
           try {
             await fsPromises.writeFile(filePath, requestBody);
             const response = createResponse('201 Created', '', '', 0);
