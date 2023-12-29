@@ -28,6 +28,8 @@ const server = net.createServer((socket) => {
     const requestArray = data.toString().split(`\r\n`);
     const [method, path, protocol] = requestArray[0].split(' ');
     const [_, userAgentInfo] = requestArray[2].split(' ');
+    const indexOfHeadersEnd = data.indexOf('');
+    const [bodyStage] = requestArray[indexOfHeadersEnd + 1];
 
     const condition4thStage = `/echo/`;
     const condition5thStage = '/user-agent';
@@ -66,6 +68,7 @@ const server = net.createServer((socket) => {
         }
         case 'POST': {
           console.log(data.toString());
+          console.log(bodyStage);
           break;
         }
         default:
