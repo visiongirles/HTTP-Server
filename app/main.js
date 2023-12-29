@@ -35,27 +35,33 @@ const server = net.createServer((socket) => {
     const condition7thStage = '/files/';
 
     if (path.startsWith(condition7thStage)) {
+      const [execPath, execFile, flag, directory] = argv;
+      const filename = path.substring(7);
+      const filePath = `${directory}${filename}`;
+
       switch (method) {
         case 'GET': {
-          const [execPath, execFile, flag, directory] = argv;
-
           // argv: /usr/local/bin/node,/app/app/main.js,--directory,/tmp/data/codecrafters.io/http-server-tester/
-          const filename = path.substring(7);
-          const filePath = `${directory}${filename}`;
 
           try {
             const stats = await fsPromises.stat(filePath);
-            console.log(`Stats: ${stats}`);
-            const status = `HTTP/1.1 200 OK`;
-            const headerContentType = `Content-Type: application/octet-stream`;
-            const headerContentLength = `Content-Length:${stats.size}`;
-            const response = [
-              status,
-              headerContentType,
-              headerContentLength,
+            // console.log(`Stats: ${stats}`);
+            const response = createResponse(
+              '200 OK',
+              'application/octet-stream',
               '',
-              '',
-            ].join('\r\n');
+              stats.size
+            );
+            // const status = `HTTP/1.1 200 OK`;
+            // const headerContentType = `Content-Type: `;
+            // const headerContentLength = `Content-Length:${stats.size}`;
+            // const response = [
+            //   status,
+            //   headerContentType,
+            //   headerContentLength,
+            //   '',
+            //   '',
+            // ].join('\r\n');
             socket.write(response);
 
             const readableStream = fs.createReadStream(filePath);
@@ -65,7 +71,7 @@ const server = net.createServer((socket) => {
             });
           } catch (error) {
             console.log(`Error from catch: ${error}`);
-            const errorResponse = `HTTP/1.1 404 Not Found\r\nContent-Length: 0\r\n\r\n`;
+            const errorResponse = createResponse('404 Not Found', '', '', 0);
             socket.write(errorResponse);
           }
           break;
@@ -77,30 +83,33 @@ const server = net.createServer((socket) => {
           break;
       }
     } else if (path.startsWith(condition5thStage)) {
-      const status = `HTTP/1.1 200 OK`;
-      const headerContentType = `Content-Type: text/plain`;
-      const body = userAgentInfo;
-      const headerContentLength = `Content-Length:${body.length}`;
-      const response = [
-        status,
-        headerContentType,
-        headerContentLength,
-        '',
-        body,
-      ].join('\r\n');
+      const response = createResponse(
+        '200 OK',
+        'text/plain',
+        userAgentInfo,
+        userAgentInfo.length
+      );
+      // const status = `HTTP/1.1 200 OK`;
+      // const headerContentType = `Content-Type: `;
+      // const body = userAgentInfo;
+      // const headerContentLength = `Content-Length:${body.length}`;
+      // const response = [
+      //   status,
+      //   headerContentType,
+      //   headerContentLength,
+      //   '',
+      //   body,
+      // ].join('\r\n');
       socket.write(response);
     } else if (path.startsWith(condition4thStage)) {
-      const status = `HTTP/1.1 200 OK`;
-      const headerContentType = `Content-Type: text/plain`;
       const body = path.substring(6);
-      const headerContentLength = `Content-Length:${body.length}`;
-      const response = [
-        status,
-        headerContentType,
-        headerContentLength,
-        '',
+      const response = createResponse(
+        '200 OK',
+        'text/plain',
         body,
-      ].join('\r\n');
+        body.length
+      );
+
       socket.write(response);
     } else {
       if (path === '/') {
