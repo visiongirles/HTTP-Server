@@ -30,7 +30,6 @@ const server = net.createServer((socket) => {
     const [_, userAgentInfo] = requestArray[2].split(' ');
     // const indexOfHeadersEnd = requestArray.indexOf('');
     // const [bodyStage] = requestArray[indexOfHeadersEnd + 1];
-    const [bodyStage] = requestArray[6];
 
     const condition4thStage = `/echo/`;
     const condition5thStage = '/user-agent';
@@ -68,6 +67,7 @@ const server = net.createServer((socket) => {
           break;
         }
         case 'POST': {
+          const [bodyStage] = requestArray[6];
           console.log(data.toString());
           console.log(bodyStage);
           break;
