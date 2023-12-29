@@ -67,9 +67,18 @@ const server = net.createServer((socket) => {
           break;
         }
         case 'POST': {
-          const bodyStage = requestArray[6];
-          console.log(data.toString());
-          console.log(bodyStage);
+          const requestBody = requestArray[6];
+          // console.log(data.toString());
+          // console.log(bodyStage);
+
+          try {
+            await fsPromises.writeFile(filePath, requestBody);
+          } catch (error) {}
+          fs.writeFile(filePath, 'Hello content!', function (err) {
+            if (err) throw err;
+            const response = createResponse('201 Created', '', '', 0);
+            socket.write(response);
+          });
           break;
         }
         default:
