@@ -28,8 +28,9 @@ const server = net.createServer((socket) => {
     const requestArray = data.toString().split(`\r\n`);
     const [method, path, protocol] = requestArray[0].split(' ');
     const [_, userAgentInfo] = requestArray[2].split(' ');
-    const indexOfHeadersEnd = requestArray.indexOf('');
-    const [bodyStage] = requestArray[indexOfHeadersEnd + 1];
+    // const indexOfHeadersEnd = requestArray.indexOf('');
+    // const [bodyStage] = requestArray[indexOfHeadersEnd + 1];
+    const [bodyStage] = requestArray[6];
 
     const condition4thStage = `/echo/`;
     const condition5thStage = '/user-agent';
